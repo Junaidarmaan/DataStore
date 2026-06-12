@@ -41,5 +41,19 @@ public class KVStore {
     public boolean delete(String key) {
         return store.remove(key) != null;
     }
+    public void update(KVStoreRequest request) {
+        KVEntry entry = store.get(request.getKey());
 
+        if (entry != null) {
+            entry.setValue(request.getValue());
+            if (request.getExpiry() != null) {
+                Long expiryInMillis = request.getExpiry() * 60 * 1000;
+                entry.setTtl(System.currentTimeMillis() + expiryInMillis);
+            } else {
+                entry.setTtl(null);
+            }
+            entry.setLastAccessed(System.currentTimeMillis());
+        }
+
+    }
 }
